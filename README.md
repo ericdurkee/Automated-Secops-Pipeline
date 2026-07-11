@@ -1,6 +1,6 @@
 # Automated SecOps Pipeline: Network Monitoring, SIEM Ingestion, and AI-Powered Threat Summarization
 
-## 📋 Project Executive Summary
+## Project Executive Summary
 This project demonstrates the end-to-end engineering of an automated Security Operations (SecOps) pipeline. Built within a private homelab environment, the pipeline mirrors production network traffic at the hardware layer, processes it via Network Security Monitoring (NSM) tooling, ingests the telemetry into a SIEM, and orchestrates real-time threat intelligence lookups and generative AI analysis to deliver automated, dark-themed executive security digests.
 
 * **The Problem:** Raw network alerts are noisy, causing alert fatigue and making rapid triage difficult for security teams.
@@ -9,7 +9,7 @@ This project demonstrates the end-to-end engineering of an automated Security Op
 
 ---
 
-## 🛠️ Step-by-Step Technical Walkthrough
+## Step-by-Step Technical Walkthrough
 
 ### Step 1: Hardware Layer & Traffic Interception (TAP/SPAN)
 To analyze network behavior without disrupting production traffic flows, packet capturing was established at the physical networking layer:
@@ -49,8 +49,9 @@ automated-secops-pipeline/
 ├── .gitignore
 ├── README.md
 ├── docs/
-│   ├── n8n-workflow-canvas.png
-│   ├── splunk-search-dashboard.png
-│   └── executive-email-output.png
+│   ├── EmailZeek.png
+│   ├── SplunkDashboard.png
+│   ├── SplunkSearch.png
+│   └── n8nWokflow.png
 └── workflows/
     └── n8n-splunk-zeek-pipeline.json  <-- Core automation layout
