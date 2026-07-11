@@ -1,0 +1,8 @@
+# Sensitive Data Exclusions
+*.env
+*secret*
+credentials.txt
+
+# Operating System Files
+.DS_Store
+Thumbs.db
