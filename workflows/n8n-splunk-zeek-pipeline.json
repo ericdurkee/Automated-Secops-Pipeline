@@ -1,0 +1,557 @@
+{
+  "name": "SplunkHome",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "weeks",
+              "triggerAtHour": 12
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        96,
+        -1168
+      ],
+      "id": "2fe09926-45de-4bc9-93ff-f700a8b64f44",
+      "name": "Schedule Trigger"
+    },
+    {
+      "parameters": {
+        "url": "=https://192.168.4.27:8089/services/search/jobs/{{ $json.sid }}/results",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpBasicAuth",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "output_mode",
+              "value": "json"
+            },
+            {
+              "name": "count",
+              "value": "500"
+            }
+          ]
+        },
+        "options": {
+          "allowUnauthorizedCerts": true
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        768,
+        -1168
+      ],
+      "id": "0a654331-d5ef-48e5-bc19-401451dd0f0d",
+      "name": "HTTP Request1",
+      "credentials": {
+        "httpBasicAuth": {
+          "id": "IQOTnvIeWjhlk1QD",
+          "name": "n8n_user"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "fromEmail": "eduericdurkee@gmail.com",
+        "toEmail": "eduericdurkee@gmail.com",
+        "subject": "={{ $json.subject }}",
+        "html": "={{ $json.body }}",
+        "options": {
+          "attachments": "dashboard_snap"
+        }
+      },
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 2.1,
+      "position": [
+        2912,
+        -1168
+      ],
+      "id": "74dde7be-329d-4324-b94d-8a6afb863245",
+      "name": "Eric Gmail",
+      "webhookId": "65631057-5c7a-45ca-b9a1-253228fd51c5",
+      "credentials": {
+        "smtp": {
+          "id": "sYPCQRixu26bfT16",
+          "name": "SMTP account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "results",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        992,
+        -1168
+      ],
+      "id": "f6ebf50d-46c6-4037-9c6d-7a940ba14b9d",
+      "name": "Split Out"
+    },
+    {
+      "parameters": {
+        "curlImport": "",
+        "httpVariantWarning": "",
+        "method": "GET",
+        "url": "=https://www.virustotal.com/api/v3/ip_addresses/{{ $json.dest_ip }}",
+        "": "",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "virusTotalApi",
+        "provideSslCertificates": false,
+        "sendQuery": false,
+        "sendHeaders": true,
+        "specifyHeaders": "keypair",
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "x-apikey",
+              "value": "f4fd302ce3f7569dc0f60769585bada8d6a14ff893836dda009b11fd6ebbb1f7"
+            }
+          ]
+        },
+        "sendBody": false,
+        "options": {
+          "allowUnauthorizedCerts": true,
+          "response": {
+            "response": {
+              "fullResponse": true,
+              "neverError": true,
+              "responseFormat": "autodetect"
+            }
+          }
+        },
+        "infoMessage": ""
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        1440,
+        -1168
+      ],
+      "id": "159df338-4229-4742-8239-3a2a28a44ad3",
+      "name": "VirusTotal HTTP Request",
+      "extendsCredential": "virusTotalApi",
+      "alwaysOutputData": true,
+      "credentials": {
+        "virusTotalApi": {
+          "id": "6sHxLSmZro7UvlwH",
+          "name": "VirusTotal account"
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "e7e90fe2-0fa3-4ee4-8909-fbbfc51eb4ce",
+              "name": "_time",
+              "value": "={{ $json._time }} }}",
+              "type": "string"
+            },
+            {
+              "id": "1bb546de-d80a-42f6-9e5e-6eb27660a0a2",
+              "name": "src_ip",
+              "value": "={{ $json.src_ip }}",
+              "type": "string"
+            },
+            {
+              "id": "8f9ad700-3ba8-4ee8-85c9-0ac8a8ef7e26",
+              "name": "dest_ip",
+              "value": "={{ $json.dest_ip }}",
+              "type": "string"
+            },
+            {
+              "id": "e7212715-2669-4cae-920e-86cebe586237",
+              "name": "proto",
+              "value": "={{ $json.proto }}",
+              "type": "string"
+            }
+          ]
+        },
+        "includeOtherFields": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1216,
+        -1168
+      ],
+      "id": "f23ca4e7-6c4a-45f7-94a6-274ebc6c27c0",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "0ef518e8-b1cf-4a22-85d4-ee83da76223e",
+              "name": "vt_malicious",
+              "value": "={{ $json.data.attributes.last_analysis_stats.malicious }}",
+              "type": "string"
+            },
+            {
+              "id": "5f0a2e0e-77ee-4549-b4fb-77fba6cf8a13",
+              "name": "=vt_total",
+              "value": "={{ $json.data.attributes.total_votes.malicious }}",
+              "type": "string"
+            },
+            {
+              "id": "bca32e8d-e442-4ae1-ab73-a4e9f89b4656",
+              "name": "vt_owner",
+              "value": "={{ $json.data.attributes.as_owner }}",
+              "type": "string"
+            }
+          ]
+        },
+        "includeOtherFields": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1664,
+        -1168
+      ],
+      "id": "043f32c1-4691-4a60-8387-9c2c992ee355",
+      "name": "Edit Fields1",
+      "alwaysOutputData": true,
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "http://192.168.4.27:3000/function",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "{\n  \"code\": \"module.exports = async ({ page }) => {\\n  // 1. Navigate to your Splunk Dashboard\\n  await page.goto('http://192.168.4.27:8000/en-US/app/search/homelab_network_overview?tab=layout_1&form.global_time.earliest=0&form.global_time.latest=now', { waitUntil: 'networkidle2' });\\n\\n  // 2. Wait for the login form and enter credentials\\n  await page.waitForSelector('input[name=\\\"username\\\"]', { timeout: 5000 }).catch(() => {});\\n  \\n  // Check if we are actually on the login page\\n  const isLoginPage = await page.$('input[name=\\\"username\\\"]');\\n  if (isLoginPage) {\\n    await page.type('input[name=\\\"username\\\"]', 'Admin');\\n    await page.type('input[name=\\\"password\\\"]', 'ChickenBisque5*');\\n    \\n    // Click the submit button and wait for the dashboard to load\\n    await Promise.all([\\n      page.click('.btn-primary, input[type=\\\"submit\\\"]'),\\n      page.waitForNavigation({ waitUntil: 'networkidle2' })\\n    ]);\\n  }\\n\\n  // 3. Set standard desktop viewport size\\n  await page.setViewport({ width: 500, height: 1080 });\\n\\n  // 4. Give Splunk charts an extra 5 seconds to finish rendering queries\\n  await new Promise(r => setTimeout(r, 5000));\\n\\n  // 5. Take the screenshot and return it\\n  const screenshot = await page.screenshot({type: 'png', clip: {x:100,y: 170,width:850 ,height: 350}});\\n  return {\\n    data: screenshot.toString('base64'),\\n    type: 'image/png'\\n  };\\n};\"}",
+        "options": {
+          "response": {
+            "response": {
+              "responseFormat": "text"
+            }
+          }
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        2176,
+        -1072
+      ],
+      "id": "572150d0-48e0-4c55-89b6-a85c469f0d87",
+      "name": "HTTP Request2",
+      "executeOnce": true
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "models/gemini-3.1-flash-lite",
+          "mode": "list",
+          "cachedResultName": "models/gemini-3.1-flash-lite"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "=Role: You are an expert Cyber Security Analyst running a home lab.\n\nTask: Look at the following network traffic details gathered from Zeek and Splunk this week. Write a clear, concise, 2 to 3-sentence \"Executive Summary\" for the weekly digest email. Focus on whether things look safe or if there is anything unusual. Keep the tone professional but accessible. Make sure to write these sentances as quick as possible without compromising accuracy and quality. Do not start with **Executive Summary**.\n\nData to Analyze: {{ JSON.stringify($(\"Edit Fields\").all().map(item => item.json)) }}"
+            }
+          ]
+        },
+        "simplify": false,
+        "builtInTools": {},
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.googleGemini",
+      "typeVersion": 1.2,
+      "position": [
+        2112,
+        -1264
+      ],
+      "id": "b7af70fa-becf-4c58-89a1-4a3f79ed8922",
+      "name": "Gemini",
+      "retryOnFail": true,
+      "waitBetweenTries": 5000,
+      "maxTries": 5,
+      "executeOnce": true,
+      "credentials": {
+        "googlePalmApi": {
+          "id": "aGvArYlGEzc6PtE4",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        1888,
+        -1072
+      ],
+      "id": "c422031e-8926-4659-880c-109de9c49935",
+      "name": "Wait 5s",
+      "webhookId": "b08e0e30-899e-4aac-88de-51326ec60a5d"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        544,
+        -1168
+      ],
+      "id": "fefe42c2-bfe5-4f23-a7ba-14db5e50717f",
+      "name": "Wait 5sec",
+      "webhookId": "076fbe74-ed44-4be0-9c5c-db3e005a280e"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://192.168.4.27:8089/services/search/jobs",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpBasicAuth",
+        "sendBody": true,
+        "contentType": "form-urlencoded",
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "search",
+              "value": "search index=zeek sourcetype=zeek_conn | where NOT like(_raw, \"#%\") | eval fields=split(_raw, \"\t\") | eval src_ip=mvindex(fields,2), dest_ip=mvindex(fields,4), proto=mvindex(fields,6) | where match(dest_ip, \"^\\d+\\.\\d+\\.\\d+\\.\\d+$\") AND NOT like(dest_ip, \"192.168.%\") AND NOT like(dest_ip, \"10.%\") AND NOT like(dest_ip, \"172.%\") AND NOT like(dest_ip, \"224.%\") AND NOT like(dest_ip, \"239.%\") AND NOT like(dest_ip, \"255.%\") AND dest_ip!=\"0.0.0.0\" | dedup dest_ip | table _time, src_ip, dest_ip, proto | sort -_time | head 20"
+            },
+            {
+              "name": "output_mode",
+              "value": "json"
+            }
+          ]
+        },
+        "options": {
+          "allowUnauthorizedCerts": true
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        320,
+        -1168
+      ],
+      "id": "ea366709-e3e9-4950-a869-8c476ec197b9",
+      "name": "Splunk",
+      "credentials": {
+        "httpBasicAuth": {
+          "id": "IQOTnvIeWjhlk1QD",
+          "name": "n8n_user"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// ==========================================\n// 1. EXTRACT & DECODE BROWSERLESS SCREENSHOT\n// ==========================================\nconst firstItem = $input.all()[0];\nconst rawText = firstItem ? firstItem.json.data : ''; \n\nlet screenshotBuffer;\nif (!rawText) {\n  screenshotBuffer = Buffer.from('R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7', 'base64');\n} else {\n  try {\n    const parsed = JSON.parse(rawText);\n    screenshotBuffer = Buffer.from(parsed.data, 'base64');\n  } catch (e) {\n    screenshotBuffer = Buffer.from(rawText, 'base64');\n  }\n}\n\n// ==========================================\n// 2. COMPILE VIRUSTOTAL THREAT INTELLIGENCE\n// ==========================================\nconst results = $input.all();\n\nconst now = new Date();\nconst weekAgo = new Date(now - 7 * 24 * 60 * 60 * 1000);\nconst fmt = d => d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });\nconst dateRange = `${fmt(weekAgo)} — ${fmt(now)}`;\n\n// Filter items flagged by VirusTotal\nconst maliciousItems = results.filter(item => {\n  const r = item.json;\n  let maliciousCount = 0;\n  if (r.data && r.data.attributes && r.data.attributes.last_analysis_stats) {\n    maliciousCount = parseInt(r.data.attributes.last_analysis_stats.malicious) || 0;\n  } else if (r.last_analysis_stats) {\n    maliciousCount = parseInt(r.last_analysis_stats.malicious) || 0;\n  }\n  return maliciousCount > 0;\n});\n\n// Build Threat HTML Rows (Splunk Dark Theme Alert Styling)\nlet threatTableContent = '';\nif (maliciousItems.length > 0) {\n  threatTableContent = maliciousItems.map((item, index) => {\n    const r = item.json;\n    let originalFields = {};\n    try { \n      originalFields = $('Edit Fields1').all()[item.pairedItem.item].json; \n    } catch (e) {\n      try { originalFields = $('Edit Fields1').all()[index].json; } catch(err) {}\n    }\n    const srcIP = originalFields.src_ip || 'Unknown';\n    const destIP = originalFields.dest_ip || (r.data && r.data.id) || 'Unknown';\n    const protocol = originalFields.proto || 'N/A';\n    \n    const stats = r.data && r.data.attributes && r.data.attributes.last_analysis_stats ? r.data.attributes.last_analysis_stats : {};\n    const malicious = parseInt(stats.malicious) || 0;\n    const total = Object.values(stats).reduce((a, b) => a + b, 0) || 91;\n\n    return `<tr style=\"border-bottom:1px solid #33343b; background-color: #2a1f21;\">\n      <td style=\"padding:12px 10px; font-weight:bold; color:#DC4E41; font-family: 'SFMono-Regular', Consolas, monospace; font-size:12px; letter-spacing: 0.5px;\">CRITICAL</td>\n      <td style=\"padding:12px 10px; font-family: 'SFMono-Regular', Consolas, monospace; font-size:12px; color:#e1e1e3;\">${srcIP}</td>\n      <td style=\"padding:12px 10px; font-family: 'SFMono-Regular', Consolas, monospace; font-size:12px; color:#e1e1e3;\">${destIP}</td>\n      <td style=\"padding:12px 10px; font-family: 'SFMono-Regular', Consolas, monospace; font-size:12px; color:#acacad; text-transform:uppercase\">${protocol}</td>\n      <td style=\"padding:12px 10px; font-family: 'SFMono-Regular', Consolas, monospace; font-size:12px; font-weight:bold; color:#DC4E41\">VT (${malicious}/${total})</td>\n    </tr>`;\n  }).join('');\n} else {\n  threatTableContent = `<tr><td colspan=\"5\" style=\"padding:24px; text-align:center; color:#53A051; font-weight:bold; font-size:13px; background-color: #16171c;\">✓ No Malicious Network Threats Detected</td></tr>`;\n}\n\n// ==========================================\n// 3. EXTRA DATA CALCULATION FOR MINI METRICS\n// ==========================================\nlet totalConnections = 0;\nlet uniqueDestCount = 0;\n\ntry {\n  const zeekData = $('Edit Fields1').all();\n  totalConnections = zeekData.length;\n  \n  const destIPs = zeekData.map(item => item.json.body?.data?.id || item.json.dest_ip || item.json.id).filter(Boolean);\n  uniqueDestCount = [...new Set(destIPs)].length;\n} catch (e) {\n  totalConnections = results.length;\n}\n\nconst maliciousCount = maliciousItems.length;\n\n// ==========================================\n// 4. DEEP PATH SELECTOR FOR MODERN GEMINI\n// ==========================================\nlet aiSummaryText = \"Summary details unavailable.\";\n\ntry {\n  const geminiHistory = $('Gemini').all();\n  if (geminiHistory && geminiHistory.length > 0) {\n    const rawData = geminiHistory[0].json;\n    if (rawData.candidates && rawData.candidates[0]?.content?.parts?.[0]?.text) {\n      aiSummaryText = rawData.candidates[0].content.parts[0].text;\n    } else {\n      aiSummaryText = rawData.text || rawData.output || aiSummaryText;\n    }\n  }\n} catch (e) {\n  aiSummaryText = \"Deep parsing error: \" + e.message;\n}\n\n// ==========================================\n// 5. ASSEMBLE HTML STRING LAYOUT (SPLUNK DARK)\n// ==========================================\nconst body = `\n<div style=\"background-color: #111216; padding: 30px 15px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;\">\n  <div style=\"max-width: 800px; margin: 0 auto; background-color: #16171c; border: 1px solid #232429; border-radius: 6px; overflow: hidden; box-shadow: 0 4px 12px rgba(0,0,0,0.3);\">\n    \n    <!-- Header/Banner -->\n    <div style=\"background-color: #1c1d22; padding: 24px 32px; border-bottom: 1px solid #232429; display: flex; align-items: center; justify-content: space-between;\">\n      <div>\n        <span style=\"color: #FF6600; font-weight: 900; font-size: 11px; letter-spacing: 1.5px; text-transform: uppercase;\">Splunk > Security Operations</span>\n        <h1 style=\"color: #ffffff; margin: 4px 0 0 0; font-size: 20px; font-weight: 600; letter-spacing: -0.5px;\">Zeek Network Intelligence Digest</h1>\n        <p style=\"color: #818285; margin: 6px 0 0 0; font-size: 12px; font-family: 'SFMono-Regular', Consolas, monospace;\">Report Interval: ${dateRange}</p>\n      </div>\n    </div>\n    \n    <div style=\"padding: 32px;\">\n      \n      <!-- AI Executive Summary Card -->\n      <div style=\"background-color: #1c1d22; border-left: 3px solid #FF6600; padding: 20px; margin-bottom: 32px; border-radius: 0 4px 4px 0;\">\n        <h3 style=\"margin: 0 0 10px 0; color: #ffffff; font-size: 13px; text-transform: uppercase; letter-spacing: 0.5px; font-weight: 700;\">\n          <span style=\"color: #FF6600; margin-right: 6px;\">■</span>AI Executive Analysis\n        </h3>\n        <p style=\"margin: 0; color: #e1e1e3; font-size: 13.5px; line-height: 1.6; font-style: italic;\">\n          ${aiSummaryText}\n        </p>\n      </div>\n      \n      <!-- Splunk KPI Metrics Panel -->\n      <div style=\"display: table; width: 100%; margin-bottom: 32px; border-spacing: 12px 0; margin-left: -12px; margin-right: -12px;\">\n        <div style=\"display: table-cell; width: 33.33%; background-color: #1c1d22; border: 1px solid #232429; padding: 16px; border-radius: 4px; text-align: center;\">\n          <span style=\"display: block; font-size: 11px; color: #818285; text-transform: uppercase; font-weight: bold; letter-spacing: 0.5px;\">Total Connections</span>\n          <span style=\"display: block; font-size: 26px; font-weight: bold; color: #ffffff; margin-top: 4px; font-family: 'SFMono-Regular', Consolas, monospace;\">${totalConnections}</span>\n        </div>\n        <div style=\"display: table-cell; width: 33.33%; background-color: #1c1d22; border: 1px solid #232429; padding: 16px; border-radius: 4px; text-align: center;\">\n          <span style=\"display: block; font-size: 11px; color: #818285; text-transform: uppercase; font-weight: bold; letter-spacing: 0.5px;\">Unique Destinations</span>\n          <span style=\"display: block; font-size: 26px; font-weight: bold; color: #006D9C; margin-top: 4px; font-family: 'SFMono-Regular', Consolas, monospace;\">${uniqueDestCount}</span>\n        </div>\n        <div style=\"display: table-cell; width: 33.33%; background-color: #1c1d22; border: 1px solid #232429; padding: 16px; border-radius: 4px; text-align: center;\">\n          <span style=\"display: block; font-size: 11px; color: #818285; text-transform: uppercase; font-weight: bold; letter-spacing: 0.5px;\">Threat Indicators</span>\n          <span style=\"display: block; font-size: 26px; font-weight: bold; color: ${maliciousCount > 0 ? '#DC4E41' : '#53A051'}; margin-top: 4px; font-family: 'SFMono-Regular', Consolas, monospace;\">${maliciousCount}</span>\n        </div>\n      </div>\n      \n      <!-- Embedded Live Splunk Chart / Screenshot -->\n      <h3 style=\"color: #ffffff; margin: 24px 0 12px 0; font-size: 13px; text-transform: uppercase; letter-spacing: 0.5px; font-weight: 700;\">Live Dashboard Snapshot</h3>\n      <div style=\"border: 1px solid #232429; border-radius: 4px; overflow: hidden; background-color: #1c1d22; padding: 12px; margin-bottom: 32px; text-align: center;\">\n        <img src=\"cid:dashboard_snap\" alt=\"Splunk Metrics Chart\" style=\"max-width: 100%; height: auto; border-radius: 2px; border: 1px solid #33343b;\" />\n      </div>\n      \n      <!-- Security Threat Events Table -->\n      <h3 style=\"color: #ffffff; margin: 0 0 12px 0; font-size: 13px; text-transform: uppercase; letter-spacing: 0.5px; font-weight: 700;\">Identified Threat Context</h3>\n      <div style=\"border: 1px solid #232429; border-radius: 4px; overflow: hidden; margin-bottom: 32px;\">\n        <table style=\"width: 100%; border-collapse: collapse; background-color: #16171c; text-align: left;\">\n          <thead>\n            <tr style=\"background-color: #1c1d22; border-bottom: 1px solid #232429;\">\n              <th style=\"padding: 12px 10px; color: #acacad; font-size: 11px; text-transform: uppercase; font-weight: bold;\">Severity</th>\n              <th style=\"padding: 12px 10px; color: #acacad; font-size: 11px; text-transform: uppercase; font-weight: bold;\">Source IP</th>\n              <th style=\"padding: 12px 10px; color: #acacad; font-size: 11px; text-transform: uppercase; font-weight: bold;\">Destination IP</th>\n              <th style=\"padding: 12px 10px; color: #acacad; font-size: 11px; text-transform: uppercase; font-weight: bold;\">Protocol</th>\n              <th style=\"padding: 12px 10px; color: #acacad; font-size: 11px; text-transform: uppercase; font-weight: bold;\">Intel Context</th>\n            </tr>\n          </thead>\n          <tbody>\n            ${threatTableContent}\n          </tbody>\n        </table>\n      </div>\n\n      <!-- Live Splunk Redirection Button -->\n      <div style=\"text-align: center; margin: 40px 0 10px 0;\">\n        <a href=\"http://theemistah-hp-elitedesk-705-g5-sff:8000/en-US/app/search/homelab_network_overview?tab=layout_1&form.global_time.earliest=0&form.global_time.latest=now\" \n           style=\"background-color: #FF6600; color: #ffffff; padding: 14px 28px; text-decoration: none; font-weight: bold; font-size: 13px; border-radius: 4px; display: inline-block; text-transform: uppercase; letter-spacing: 0.5px; box-shadow: 0 2px 4px rgba(0,0,0,0.4); transition: background 0.2s;\">\n           Launch Splunk Dashboard\n        </a>\n      </div>\n\n    </div>\n    \n    <!-- Footer -->\n    <div style=\"background-color: #1c1d22; padding: 16px 32px; border-top: 1px solid #232429; display: flex; justify-content: space-between; align-items: center;\">\n      <p style=\"margin: 0; font-size: 11px; color: #818285; font-family: 'SFMono-Regular', Consolas, monospace;\">Pipeline: Homelab n8n System Cluster · Index: zeek · Enriched via VT-API</p>\n    </div>\n    \n  </div>\n</div>`;\n\n// ==========================================\n// 6. UNIFIED OUTPUT: TEXT + BINARY FILE\n// ==========================================\nreturn [{ \n  json: { \n    subject: `[Splunk Alert] Network Digest Summary Report — ${fmt(now)}`, \n    body: body \n  },\n  binary: {\n    dashboard_snap: {\n      data: screenshotBuffer.toString('base64'),\n      mimeType: 'image/png',\n      fileName: 'splunk_dashboard.png'\n    }\n  }\n}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2688,
+        -1168
+      ],
+      "id": "7b6258df-4da8-4e2b-96da-f8e5aaf007b1",
+      "name": "Code Node JS"
+    },
+    {
+      "parameters": {
+        "mode": "chooseBranch",
+        "useDataOfInput": 2
+      },
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        2464,
+        -1168
+      ],
+      "id": "c1d25774-1f0c-40ac-bac8-3d0098bf0610",
+      "name": "Merge"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "Splunk",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request1": {
+      "main": [
+        [
+          {
+            "node": "Split Out",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Out": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "VirusTotal HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "VirusTotal HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields1": {
+      "main": [
+        [
+          {
+            "node": "Wait 5s",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Gemini",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request2": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Gemini": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait 5s": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait 5sec": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Splunk": {
+      "main": [
+        [
+          {
+            "node": "Wait 5sec",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code Node JS": {
+      "main": [
+        [
+          {
+            "node": "Eric Gmail",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge": {
+      "main": [
+        [
+          {
+            "node": "Code Node JS",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Eric Gmail": {
+      "main": [
+        []
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "versionId": "3871d5c9-0b2e-4555-b243-016c5dea3f96",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "2c039850e452ecf9cfdcbac60f0ee0709cc034df07a910ae2571111013804140"
+  },
+  "nodeGroups": [],
+  "id": "yRM14wF3I7zKIlXV",
+  "tags": []
+}
