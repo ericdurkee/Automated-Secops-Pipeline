@@ -52,6 +52,7 @@ automated-secops-pipeline/
 │   ├── EmailZeek.png
 │   ├── SplunkDashboard.png
 │   ├── SplunkSearch.png
-│   └── n8nWokflow.png
+│   ├── n8nWokflow.png
+│   └── MobileEmail.png
 └── workflows/
     └── n8n-splunk-zeek-pipeline.json  <-- Core automation layout
